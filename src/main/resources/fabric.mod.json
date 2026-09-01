@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "exp_system",
+  "version": "${version}",
+  "name": "Exp System",
+  "description": "Global Mending distribution and balanced TACZ kill XP bonuses.",
+  "authors": ["apm23"],
+  "environment": "*",
+  "mixins": ["exp_system.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "26.2",
+    "java": ">=25",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "tacz": "*"
+  }
+}

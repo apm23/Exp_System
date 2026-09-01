@@ -1,0 +1,38 @@
+name: build-exp-system
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.5.1'
+      - name: Build
+        run: gradle clean build --stacktrace
+      - name: Dedicated server smoke test
+        run: |
+          mkdir -p run
+          echo 'eula=true' > run/eula.txt
+          set +e
+          timeout 90s gradle runServer --args='nogui' > /tmp/exp-system-server.log 2>&1
+          CODE=$?
+          set -e
+          cat /tmp/exp-system-server.log
+          if [ "$CODE" -ne 0 ] && [ "$CODE" -ne 124 ]; then exit "$CODE"; fi
+          if grep -E -i 'mixin apply failed|mixin.*error|invalid injection|injection error|exception.*exp_system|failed to load.*exp_system' /tmp/exp-system-server.log; then exit 1; fi
+          grep -q 'Done (' /tmp/exp-system-server.log || { echo 'Server never reached ready state.'; exit 1; }
+      - name: Upload JARs
+        uses: actions/upload-artifact@v4
+        with:
+          name: exp-system-build
+          path: build/libs/*.jar
