@@ -23,6 +23,16 @@ dependencies {
     runtimeOnly "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:26.2.1"
 }
 
+fabricApi {
+    configureTests {
+        createSourceSet = true
+        modId = "exp-system-gametest"
+        enableGameTests = true
+        enableClientGameTests = false
+        eula = true
+    }
+}
+
 processResources {
     inputs.property 'version', project.version
     filesMatching('fabric.mod.json') { expand 'version': project.version }
