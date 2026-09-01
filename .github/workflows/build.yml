@@ -19,6 +19,8 @@ jobs:
           gradle-version: '9.5.1'
       - name: Build
         run: gradle clean build --stacktrace
+      - name: Global Mending functional GameTest
+        run: gradle runGametest --stacktrace
       - name: Dedicated server smoke test
         run: |
           mkdir -p run
