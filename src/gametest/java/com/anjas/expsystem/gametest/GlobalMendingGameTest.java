@@ -13,7 +13,7 @@ import net.minecraft.world.level.GameType;
 public class GlobalMendingGameTest {
     @GameTest
     public void repairsMultipleMendingItemsAndKeepsRemainder(GameTestHelper helper) {
-        ServerPlayer player = helper.makeMockServerPlayer(GameType.SURVIVAL);
+        ServerPlayer player = (ServerPlayer) helper.makeMockServerPlayer(GameType.SURVIVAL);
         var enchantments = player.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
         var mending = enchantments.getOrThrow(Enchantments.MENDING);
 
