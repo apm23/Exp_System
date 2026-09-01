@@ -3,9 +3,9 @@
   "id": "exp_system",
   "version": "${version}",
   "name": "Exp System",
-  "description": "Global Mending distribution and balanced TACZ kill XP bonuses.",
+  "description": "Server-side global Mending distribution and balanced TACZ kill XP bonuses.",
   "authors": ["apm23"],
-  "environment": "*",
+  "environment": "server",
   "mixins": ["exp_system.mixins.json"],
   "depends": {
     "fabricloader": ">=0.19.3",
