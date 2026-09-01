@@ -1,5 +1,7 @@
 package com.anjas.expsystem.mixin;
 
+import java.util.Locale;
+
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.Entity;
@@ -34,7 +36,11 @@ public abstract class LivingEntityMixin {
         if (!expSystem$isTaczKill(context.victim, context.killer)) return original;
 
         double multiplier = expSystem$isBoss(context.victim) ? 1.5D : 2.5D;
-        return Math.max(original, (int) Math.round(original * multiplier));
+        int boosted = Math.max(original, (int) Math.round(original * multiplier));
+        System.out.println("[Exp System] TACZ Hard XP boost: "
+                + context.victim.getType() + " " + original + " -> " + boosted
+                + " (x" + multiplier + ")");
+        return boosted;
     }
 
     @Inject(method = "dropExperience", at = @At("RETURN"))
@@ -45,16 +51,21 @@ public abstract class LivingEntityMixin {
     private static boolean expSystem$isTaczKill(LivingEntity victim, Entity killer) {
         DamageSource source = victim.getLastDamageSource();
         if (source == null) return false;
+
         Entity direct = source.getDirectEntity();
         if (expSystem$isTaczEntity(direct)) return true;
         if (expSystem$isTaczEntity(source.getEntity())) return true;
-        return killer != null && expSystem$isTaczEntity(killer);
+        if (killer != null && expSystem$isTaczEntity(killer)) return true;
+
+        // Fallback for TACZ versions/targets that replace the direct projectile cause
+        // (for example special damage-source handling). Avoid a hard TACZ dependency.
+        return source.toString().toLowerCase(Locale.ROOT).contains("tacz");
     }
 
     private static boolean expSystem$isTaczEntity(Entity entity) {
         if (entity == null) return false;
         String name = entity.getClass().getName();
-        return name.startsWith("com.tacz.") || name.startsWith("com.tacz.guns.");
+        return name.startsWith("com.tacz.");
     }
 
     private static boolean expSystem$isBoss(LivingEntity entity) {
